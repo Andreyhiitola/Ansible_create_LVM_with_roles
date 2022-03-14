@@ -1,0 +1,29 @@
+
+
+---
+- name : Create  LVM  Playbook
+# hosts: localhost
+  hosts: staging_1
+  become: yes
+
+#  tasks:
+# - debug:
+#         var: ansible_facts
+  
+# tasks:
+# - name: Collect only facts about hardware
+#   setup:
+#     gather_subset:
+#     - hardware
+
+# - name: Output disks
+#   debug:
+#     var: hostvars[inventory_hostname].ansible_devices.keys() | map('regex_search', 'sd.*') | select('string') | list
+
+# - name: gathering facts disks
+#   gather_facts: {{ ansible_facts['devices']['xvda']['model'] }}
+
+
+  roles:
+  - Update_system 
+#   - { role: create_LVM_Disk, when: ansible_system == 'Linux' } -  в такой конфигурации запустит roles если операционная система Linux           

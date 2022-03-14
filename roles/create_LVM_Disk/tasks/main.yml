@@ -1,0 +1,115 @@
+---
+
+
+  - name: Set authorized key took from file
+    authorized_key:
+       user: root
+       state: present
+       key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}" 
+
+  - name: Say Hello to ALL
+    debug: msg="Hello {{ item }}"
+    loop: "{{ list_name }}"                      
+#      - "Vasya"
+#      - "Peta"
+#      - "Masha"
+
+
+  - name: Collect only facts about hardware
+    setup:
+      gather_subset:
+      - hardware
+
+  - name: Output disks
+    debug:
+      var: hostvars[inventory_hostname].ansible_devices.keys() | map('regex_search', 'sd.*') | select('string') | list
+
+
+  - name: Install  install LVM2 and other
+    yum:
+      name: "{{ package }}"
+
+
+  - name: Create a new ext4 primary partition
+    community.general.parted:
+        device: /dev/sdb                          # /dev/{{item.disk1}}     #/dev/sdb
+        number: 1
+        state: present
+        fs_type: ext4
+
+
+  - name: Create a new ext4 primary partition
+    community.general.parted:
+       device: /dev/sdc                           #/dev/{{item.disk2}}       #/dev/sdc
+       number: 1
+       state: present
+       fs_type: ext4
+
+
+  - name: Create a new ext4 primary partition
+    community.general.parted:
+       device: /dev//sdd                          # /dev/{{item.disk3}}      #/dev/sdd
+       number: 1
+       state: present
+       fs_type: ext4
+
+
+     
+
+  - name: Create or resize a volume group on top of /dev/sdb  /dev/sdc /dev/sdd
+    lvg:
+       vg: vg1
+       pvs: /dev/sdb1,/dev/sdc1,/dev/sdd1
+
+  - name: Create a logical volume of 100%free     
+    lvol:
+       vg: vg1
+       lv: lv1
+       size: 100%PVS
+       resizefs: true    
+
+
+
+
+  - name: Create directory data if does not exist
+    file:
+        path: /mnt/data
+        state: directory
+        mode: '0755'
+
+  - name: format the xfs filesystem
+    filesystem:
+        fstype: ext4
+        dev: /dev/vg1/lv1
+
+  - name: mount the lv on /data
+    mount:
+        path: /mnt/data
+        src: /dev/vg1/lv1
+        fstype: ext4
+        state: mounted
+ 
+  - name: Print Final output
+    debug: 
+       var: output.stdout   
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+
+
+
+
+
+
+    
