@@ -1,6 +1,3 @@
+---
+  var1: " hostvars[inventory_hostname].ansible_devices.keys() | map('regex_search', 'sd.*') | select('string') | list"           
 
-#   package
-#   - lvm2
-#   - mc
-#   - tree
-#   - tmux
