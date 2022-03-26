@@ -1,23 +1,23 @@
 ---
-  - name: Set authorized key took from file
+  - name: "Set authorized key took from file"
     authorized_key:
-       user: root
-       state: present 
-       key: "{{ lookup('file', '{{ key_1 }}') }}"
-                                                                
+      user: root
+      state: present
+      key: "{{ lookup('file', '{{ key_1 }}') }}"
 
   - name: Say Hello to ALL
-    debug: msg="Hello {{ item }}"
-    loop: "{{ list_name }}"                       
-                                                    # - "Vasy"                                                   
+    debug:
+      msg: "Hello {{ item }}"
+    loop: "{{ list_name }}"
 
   - name: Collect only facts about hardware
     setup:
       gather_subset:
       - hardware
+
   - name: Output disks
     debug:
-      var:  hostvars[inventory_hostname].ansible_devices.keys() | map('regex_search', 'sd.*') | select('string') | list  # "{{ vars1 }}"
+      var: hostvars[inventory_hostname].ansible_devices.keys() | map('regex_search', 'sd.*') | select('string') | list  # "{{ vars1 }}"
 
   - name: Install  install LVM2 and other
     yum:
@@ -25,56 +25,56 @@
 
   - name: Create a new ext4 primary partition
     community.general.parted:
-        device: "{{ drive1 }}"                      # drive1: "/dev/sdb"
-        number: "{{ part }}"
-        state: present
-        fs_type: "{{ fs_type }}"
+      device: "{{ drive1 }}"                      # drive1: "/dev/sdb"
+      number: "{{ part }}"
+      state: present
+      fs_type: "{{ fs_type }}"
 
   - name: Create a new ext4 primary partition
     community.general.parted:
-       device: "{{ drive2 }}"                       # drive2: "/dev/sdc"
-       number: "{{ part }}"
-       state: present
-       fs_type: "{{ fs_type }}"
+      device: "{{ drive2 }}"                       # drive2: "/dev/sdc"
+      number: "{{ part }}"
+      state: present
+      fs_type: "{{ fs_type }}"
 
   - name: Create a new ext4 primary partition
     community.general.parted:
-       device: "{{ drive3 }}"                       # drive3:   "/dev/sdd"
-       number: "{{ part }}"
-       state: present
-       fs_type: "{{ fs_type }}"
+      device: "{{ drive3 }}"                       # drive3:   "/dev/sdd"
+      number: "{{ part }}"
+      state: present
+      fs_type: "{{ fs_type }}"
 
   - name: Create or resize a volume group on top of /dev/sdb  /dev/sdc /dev/sdd
     lvg:
-       vg: vg1
-       pvs: /dev/sdb1,/dev/sdc1,/dev/sdd1  
+      vg: vg1
+      pvs: /dev/sdb1,/dev/sdc1,/dev/sdd1  
 
   - name: Create a logical volume of 100%free     
     lvol:
-       vg: vg1
-       lv: lv1
-       size: 100%PVS
-       resizefs: true    
+      vg: vg1
+      lv: lv1
+      size: 100%PVS
+      resizefs: true    
 
   - name: Create directory data if does not exist
     file:
-        path: "{{ mount }}"                                # /mnt/data
-        state: directory
-        mode: '0755'
+      path: "{{ mount }}"                                # /mnt/data
+      state: directory
+      mode: '0755'
 
   - name: format the xfs filesystem
     filesystem:
-        fstype: "{{ fs_type }}"
-        dev: "{{ vgroup }}"                                # /dev/vg1/lv1
+      fstype: "{{ fs_type }}"
+      dev: "{{ vgroup }}"                                # /dev/vg1/lv1
 
   - name: mount the lv on /data
     mount:
-        path: "{{ mount }}"                                # /mnt/data
-        src: "{{ vgroup }}"                                # /dev/vg1/lv1
-        fstype: "{{ fs_type }}" 
-        state: mounted
+      path: "{{ mount }}"                                # /mnt/data
+      src: "{{ vgroup }}"                                # /dev/vg1/lv1
+      fstype: "{{ fs_type }}" 
+      state: mounted
  
   - name: Print Final output
     debug: 
-        var: output.stdout   
+      var: output.stdout
 
