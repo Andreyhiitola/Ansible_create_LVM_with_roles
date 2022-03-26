@@ -1,5 +1,8 @@
 ---
-# defaults file for create_LVM_Disk
+# defaults file for create_LVM_Dis
+ 
+  key_1: "/root/.ssh/id_rsa.pub"
+
   package:
   - lvm2
   - mc
@@ -12,15 +15,14 @@
   - "Pety"
   - "Masha"
 
-#  drive1: "/dev/sdb"
-#  drive2: "/dev/sdc"
-#  drive3: "/dev/sdd"
-    
-#  fs_type: "ext4"
+  part: "1"             # Количество разделов на диске
 
-#  item.disk1:
-#   - "sdb"
-#  item.disk2:
-#  - "sdc"
-#  item.disk3:
-#  - "sdd"   
+  drive1: "/dev/sdb"    # Диски
+  drive2: "/dev/sdc"
+  drive3: "/dev/sdd"
+    
+  fs_type: "ext4"       # Файловая система
+
+  vgroup: "/dev/vg1/lv1"
+  mount: "/mnt/data"     # Точки монтирования
+
